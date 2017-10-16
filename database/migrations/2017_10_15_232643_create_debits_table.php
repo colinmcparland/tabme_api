@@ -16,6 +16,13 @@ class CreateDebitsTable extends Migration
         Schema::create('debits', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->integer('user_id')->unsigned();
+            $table->integer('debtor_id')->unsigned();
+            $table->integer('amount');
+
+            //  Foreign keys
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('debtor_id')->references('id')->on('users');
         });
     }
 

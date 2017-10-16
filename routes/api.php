@@ -22,3 +22,7 @@ Route::post('/user/create', 'ApiController@createUser');
 Route::post('/user/validate', 'ApiController@validateUser');
 
 Route::post('/friend/{email}', 'ApiController@addFriend')->middleware('auth:api');
+
+Route::post('/friend/search/{id}', 'ApiController@searchFriends')->middleware('auth:api');
+
+Route::post('/debit', 'ApiController@addDebit')->middleware('auth:api');

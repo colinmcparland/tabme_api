@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Friend;
+use App\Debits;
 use Illuminate\Support\Facades\Hash;
 use Validator;
 use GuzzleHttp\Client;
@@ -127,10 +128,9 @@ class ApiController extends Controller
      * Add a friend for a specified user.
      * @param Request $request     HTTP request sent to the API
      */
-    function addFriend(Request $request) {
+    function addFriend(Request $request, $email) {
 
         //  Get the variables
-        $email = $request->input('email');
         $user_id = $request->input('user_id');
 
         //  Check if the requested email exists
@@ -157,6 +157,50 @@ class ApiController extends Controller
         }
         else {
             return response()->json(['status' => '0', 'content' => 'That email is not registered.']);
+        }
+    }
+
+
+    function searchFriends(Request $request, $id) {
+        $friends = Friend::where('user_id', '=', $id)->get();
+
+        if($friends->count() > 0) {
+
+            $ret = [];
+
+            foreach($friends as $friend) {
+                $this_user = User::where('id', '=', $friend->friend_id)->first();
+                array_push($ret, ['email' => $this_user->email, 'id' => $this_user->id]);
+            }
+            return response()->json(['status' => '200', 'content' => $ret]);
+        }
+        else {
+            return response()->json(['status' => '0', 'content' => 'No friends found.']);
+        }
+    }
+
+
+    function addDebit(Request $request) {
+
+        //  Set the variables
+        $amount = $request->input('amount');
+        $user_id = $request->input('id');
+        $debtor_email = $request->input('email');
+
+        //  See if the debtor email exists
+        if(User::where('email', '=', $debtor_email)->count() > 0) {
+
+            //  If so, add a new debit
+            $debit = new Debits;
+            $debit->amount = $amount;
+            $debit->user_id = $user_id;
+            $debit->debtor_id = $debtor_id;
+            $debit->save();
+
+            return response()->json(['status' => '200']);
+        }
+        else {
+            return response()->json(['status' => '0', 'content' => 'Sorry, the requested email address cannot be found.']);
         }
 
     }
