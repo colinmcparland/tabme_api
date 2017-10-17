@@ -124,6 +124,19 @@ class ApiController extends Controller
         }
     }
 
+
+    function addUserCardToken(Request $request) {
+        $this_id = $request->input('user_id');
+        $token = $request->input('token');
+
+        $this_user = User::where('id', '=', $this_id)->first();
+
+        $this_user->cc_token = $token;
+        $this_user->save();
+
+        return response()->json(['status' => '200']);
+    }
+
     /**
      * Add a friend for a specified user.
      * @param Request $request     HTTP request sent to the API
@@ -190,17 +203,42 @@ class ApiController extends Controller
         //  See if the debtor email exists
         if(User::where('email', '=', $debtor_email)->count() > 0) {
 
+            //  Create the debtor
+            $debtor = User::where('email', '=', $debtor_email)->first();
+
             //  If so, add a new debit
             $debit = new Debits;
             $debit->amount = $amount;
             $debit->user_id = $user_id;
-            $debit->debtor_id = $debtor_id;
+            $debit->debtor_id = $debtor->id;
             $debit->save();
 
             return response()->json(['status' => '200']);
         }
         else {
             return response()->json(['status' => '0', 'content' => 'Sorry, the requested email address cannot be found.']);
+        }
+
+    }
+
+
+    function getDebit(Request $request, $user_id) {
+
+        // Get a collection of the users debits
+        $debits = Debits::where('user_id', '=', $user_id)->get();
+
+        //  See if any debits exist
+        if($debits->count() > 0) {
+            $ret = [];
+            foreach($debits as $debit) {
+                //  Get the debtor
+                $debtor = User::where('id', '=', $debit->debtor_id)->first();
+                array_push($ret, ['amount' => $debit->amount, 'debtor_email' => $debtor->email, 'debit_id' => $debit->id, 'created' => date('F d, Y', strtotime($debit->created_at))]);
+            }
+            return response()->json(['status' => '200', 'content' => $ret]);
+        }
+        else {
+            return response()->json(['status' => '0', 'content' => 'You have no debits.']);
         }
 
     }

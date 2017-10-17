@@ -21,8 +21,12 @@ Route::post('/user/create', 'ApiController@createUser');
 
 Route::post('/user/validate', 'ApiController@validateUser');
 
+Route::post('/user/cctoken', 'ApiController@addUserCardToken')->middleware('auth:api');
+
 Route::post('/friend/{email}', 'ApiController@addFriend')->middleware('auth:api');
 
 Route::post('/friend/search/{id}', 'ApiController@searchFriends')->middleware('auth:api');
 
 Route::post('/debit', 'ApiController@addDebit')->middleware('auth:api');
+
+Route::get('/debit/{user_id}', 'ApiController@getDebit')->middleware('auth:api');
