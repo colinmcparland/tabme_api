@@ -14,7 +14,8 @@ class AddUserCcToken extends Migration
     public function up()
     {
         Schema::table('users', function($table) {
-            $table->string('cc_token')->nullable();
+            $table->string('stripe_token')->nullable();
+            $table->string('stripe_cc_token')->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ class AddUserCcToken extends Migration
     public function down()
     {
         Schema::table('users', function($table) {
-            $table->dropColumn('cc_token');
+            $table->dropColumn('stripe_cc_token');
+            $table->dropColumn('stripe_token');
         });
     }
 }
