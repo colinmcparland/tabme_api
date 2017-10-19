@@ -128,11 +128,11 @@ class UserController extends Controller
     }
 
 
-    function addUserCardToken(Request $request) {
+    function addUserBankToken(Request $request) {
         $user_id = $request->input('user_id');
         $token = $request->token;
 
-        $stripe_id = (new StripeController)->addStripeAccount($token, $request->country);
+        $stripe_id = (new StripeController)->addStripeAccount($request);
 
         // $this_user = User::where('id', '=', $this_id)->first();
 

@@ -21,7 +21,7 @@ Route::post('/user/create', 'UserController@createUser');
 
 Route::post('/user/validate', 'UserController@validateUser');
 
-Route::post('/user/cctoken', 'UserController@addUserCardToken')->middleware('auth:api');
+Route::post('/user/banktoken', 'UserController@addUserBankToken')->middleware('auth:api');
 
 Route::post('/friend/{email}', 'FriendController@addFriend')->middleware('auth:api');
 
