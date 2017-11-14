@@ -33,5 +33,9 @@ Route::get('/debit/{user_id}', 'DebitsController@getDebit')->middleware('auth:ap
 
 Route::get('/debit/owing/{user_id}', 'DebitsController@getDebitOwing')->middleware('auth:api');
 
+Route::get('/debit/remind/{debit_id}', 'DebitsController@sendReminder')->middleware('auth:api');
+
+Route::get('/debit/delete/{debit_id}', 'DebitsController@deleteDebit')->middleware('auth:api');
+
 Route::post('/debit/payback', 'DebitsController@payBackDebit')->middleware('auth:api');
 

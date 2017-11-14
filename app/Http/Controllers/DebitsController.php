@@ -11,6 +11,8 @@ use Validator;
 use GuzzleHttp\Client;
 use Stripe\Stripe;
 use Stripe\Payout;
+use App\Mail\DebitReminder;
+use Illuminate\Support\Facades\Mail;
 
 class DebitsController extends Controller
 {
@@ -110,5 +112,33 @@ class DebitsController extends Controller
         ));
 
         return response()->json($resp);
+    }
+
+
+    function sendReminder(Request $request, $debit_id) {
+        //  Get the debit in question from its ID
+        $debit = Debits::where('id', '=', $debit_id)->first();
+
+        //  Get the debtor and crditor users
+        $debtor = User::where('id', '=', $debit->debtor_id)->first();
+        $creditor = User::where('id', '=', $debit->user_id)->first();
+
+        //  Send the email
+        $ret = Mail::to($debtor)->send(new DebitReminder($debit));
+
+        return response()->json($ret);
+    }
+
+
+
+    function deleteDebit(Request $request, $debit_id) {
+        //  Get the debit in question
+        $debit = Debits::where('id', '=', $debit_id)->first();
+
+        //  Delete it
+        $resp = $debit->delete();
+
+        //  Build response message and return
+        return response()->json(['status' => '200', 'content' => $resp]);
     }
 }

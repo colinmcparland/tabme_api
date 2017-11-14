@@ -66,6 +66,7 @@ class UserController extends Controller
             $tokens = json_decode($auth_response->getBody(), true);
 
 			return response()->json(['status' => '200', 'content' => $user, 'access_token' => $tokens['access_token'], 'refresh_token' => $tokens['refresh_token']]);
+
 		}
     }
 
