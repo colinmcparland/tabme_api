@@ -72,4 +72,38 @@ class FriendController extends Controller
         else {
             return response()->json(['status' => '0', 'content' => 'No friends found.']);
         }
-    }}
+    }
+
+
+    function getAggregate(Request $request) {
+        $friend_email = $request->input('email');
+        $this_user = $request->input('user_id');
+
+        //  Get the ID of the friend
+        $friend = User::where('email', '=', $friend_email)->first();
+
+        //  Get all IOUs that the user owes their friend
+        $owing = Debits::where([
+            ['debtor_id', '=', $this_user],
+            ['user_id', '=', $friend->id]
+        ])->get();
+
+        //  Get all the IOUs that the friend owes to the user
+        $owed = Debits::where([
+            ['user_id', '=', $this_user],
+            ['debtor_id', '=', $friend->id]
+        ])->get();
+
+        $balance = 0;
+
+        foreach($owing as $iou) {
+            $balance -= $iou->amount;
+        }
+
+        foreach($owed as $iou) {
+            $balance += $iou->amount;
+        }
+
+        return response()->json(['status' => '200', 'balance' => $balance, 'owing' => $owing, 'owed' => $owed]);
+    }
+}

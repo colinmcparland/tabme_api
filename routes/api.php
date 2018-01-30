@@ -23,9 +23,11 @@ Route::post('/user/validate', 'UserController@validateUser');
 
 Route::post('/user/banktoken', 'UserController@addUserBankToken')->middleware('auth:api');
 
-Route::post('/friend/{email}', 'FriendController@addFriend')->middleware('auth:api');
+Route::post('/friend/add/{email}', 'FriendController@addFriend')->middleware('auth:api');
 
 Route::post('/friend/search/{id}', 'FriendController@searchFriends')->middleware('auth:api');
+
+Route::post('/friend/aggregate', 'FriendController@getAggregate')->middleware('auth:api');
 
 Route::post('/debit', 'DebitsController@addDebit')->middleware('auth:api');
 
